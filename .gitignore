@@ -16,6 +16,10 @@ __pycache__/
 *.tfvars
 *.tfstate*
 .terraform/
+# Ignore Terraform backend configuration files
+backend.hcl
+**/backend.hcl
+
 # IDE
 .vscode/
 .idea/
