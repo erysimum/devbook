@@ -1,0 +1,67 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: devbook-db
+    environment:
+      POSTGRES_USER: devbook
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: devbook
+    ports:
+      - "5432:5432"
+    networks: [devbook-net]
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devbook -d devbook"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build: ./backend
+    container_name: devbook-migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [devbook-net]
+    environment:
+      DATABASE_URL: "postgresql://devbook:devpass@db:5432/devbook?schema=public"
+      JWT_SECRET: "devbook-dev-secret"
+      PORT: "3000"
+    command: ["npx", "prisma", "migrate", "deploy"]
+    restart: "no"
+
+  backend:
+    build: ./backend
+    container_name: devbook-backend
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks: [devbook-net]
+    environment:
+      DATABASE_URL: "postgresql://devbook:devpass@db:5432/devbook?schema=public"
+      JWT_SECRET: "devbook-dev-secret"
+      ACCESS_TOKEN_SECRET: "devbook-dev-secret" 
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+     
+
+  frontend:
+    build: ./frontend
+    container_name: devbook-frontend
+    depends_on: [backend]
+    networks: [devbook-net]
+    ports:
+      - "5173:80"
+
+volumes:
+  dbdata:
+
+networks:
+  devbook-net:
+    driver: bridge

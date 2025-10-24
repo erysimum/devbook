@@ -1,0 +1,26 @@
+
+# node & build
+node_modules/
+dist/
+build/
+coverage/
+# python
+__pycache__/
+*.pyc
+# docker
+*.log
+# env & secrets
+.env
+.env.*
+
+*.tfvars
+*.tfstate*
+.terraform/
+# IDE
+.vscode/
+.idea/
+# misc
+.DS_Store
+EOF
+
+
