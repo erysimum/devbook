@@ -84,6 +84,7 @@ module "eks" {
       desired_size   = var.node_desired_size
       capacity_type  = "ON_DEMAND"
       subnet_ids     = module.vpc.private_subnets
+      ami_type = "BOTTLEROCKET_x86_64" 
 
       labels = {
         workload  = "general"
@@ -109,9 +110,11 @@ module "alb_irsa" {
   version = "~> 5.0"
 
   role_name = "${var.project_name}-alb-controller-${var.env}"
-  attach_policy_arns = [
-    "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
-  ]
+  # attach_policy_arns = [
+  #   "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
+  # ]
+  attach_load_balancer_controller_policy = true
+
 
   oidc_providers = {
     eks = {
@@ -261,7 +264,7 @@ module "rds" {
   password = var.db_password
 
   db_subnet_group_name   = module.db_subnet_group.db_subnet_group_name
-  vpc_security_group_ids = [module.db_sg.security_group_id]
+  vpc_security_group_ids = [module.db_sg.security_group_id] #ID of the RDS security group 
   parameter_group_name   = aws_db_parameter_group.postgres_params.name
 
   skip_final_snapshot = false

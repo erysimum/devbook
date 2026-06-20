@@ -26,6 +26,7 @@ output "eks_node_security_group_id" {
   value = module.eks.node_security_group_id
 }
 
+##Security Group ID for the dynamically generated ALB
 output "alb_security_group_id" {
   value = aws_security_group.alb_sg.id
 }
@@ -37,6 +38,27 @@ output "backend_security_group_id" {
 output "rds_endpoint" {
   value = module.rds.db_instance_endpoint
 }
+# output "db_endpoint" {
+#   description = "RDS connection endpoint"
+#   value       = module.rds.db_instance_endpoint
+# }
+
+output "db_port" {
+  description = "RDS port"
+  value       = module.rds.db_instance_port
+}
+
+output "db_name" {
+  description = "DB name"
+  value       = module.rds.db_instance_name
+}
+
+output "db_username" {
+  description = "Master username"
+  value       = module.rds.db_instance_username
+  sensitive   = true
+}
+
 
 output "alb_irsa_role_arn" {
   value = module.alb_irsa.iam_role_arn

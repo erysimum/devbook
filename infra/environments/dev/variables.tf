@@ -87,5 +87,5 @@ variable "image_tag_mutability" {
 variable "force_delete" {
   description = "Force delete ECR repository if not empty"
   type        = bool
-  default     = false #Whether Terraform should force delete the ECR repository even if it’s not empty
+  default     = true #Whether Terraform should force delete the ECR repository even if it’s not empty
 }
